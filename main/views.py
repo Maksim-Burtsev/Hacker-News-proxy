@@ -1,10 +1,16 @@
 from django.shortcuts import render
 
-from main.services import get_updated_html_page
+from main.services import get_updated_html_page, add_query_params_to_link
 
 
 def index(request):
 
-    page = get_updated_html_page(f'https://news.ycombinator.com{request.path}')
+    url = f'https://news.ycombinator.com{request.path}'
+
+    request_items = dict(request.GET).items()
+    if request_items:
+        url = add_query_params_to_link(url, request_items)
+
+    get_updated_html_page(url)
 
     return render(request, 'main/index.html')

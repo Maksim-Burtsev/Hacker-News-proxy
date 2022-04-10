@@ -6,6 +6,17 @@ import requests
 import fake_useragent
 
 
+def add_query_params_to_link(url: str, request_items: dict) -> str:
+    """
+    Добавляет к ссылке query-параметры из словаря
+    """
+    url += '?'
+    for key, values in request_items:
+        url += f'&{key}={values[0]}'
+
+    return url
+
+
 def _parser(url: str) -> str:
     """
     Парсит html-страницу и подключает к ней стили
@@ -28,7 +39,7 @@ def _parser(url: str) -> str:
         return ''.join(html_text_list)
 
 
-def _replace_and_create_file(html_text: str) -> str:
+def _replace_and_create_file(html_text: str) -> None:
     """
     Добавляет ко всем словам html-страницы с длиной равной шести ™, обновляет ссылки и записывает все в файл 
     """
@@ -48,8 +59,6 @@ def _replace_and_create_file(html_text: str) -> str:
 
     with open('main\\templates\\main\\index.html', 'w', encoding='utf-8') as f:
         f.write(res)
-
-    return res
 
 
 def _clean_text_from_html(html_text: str) -> str:
