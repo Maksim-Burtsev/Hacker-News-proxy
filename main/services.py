@@ -1,5 +1,6 @@
-import string
 import re
+import string
+from typing import Union
 
 import html2text
 import requests
@@ -11,13 +12,18 @@ def add_query_params_to_link(url: str, request_items: dict) -> str:
     Добавляет к ссылке query-параметры из словаря
     """
     url += '?'
+    k = 0
     for key, values in request_items:
-        url += f'&{key}={values[0]}'
+        if k == 0:
+            url += f'{key}={values[0]}'
+        else:
+            url += f'&{key}={values[0]}'
+        k += 1
 
     return url
 
 
-def _parser(url: str) -> str:
+def _parser(url: str) -> Union[str, None]:
     """
     Парсит html-страницу и подключает к ней стили
     """
@@ -39,7 +45,7 @@ def _parser(url: str) -> str:
         return ''.join(html_text_list)
 
 
-def _replace_and_create_file(html_text: str) -> None:
+def _replace_and_create_file(html_text: str, filename: str) -> None:
     """
     Добавляет ко всем словам html-страницы с длиной равной шести ™, обновляет ссылки и записывает все в файл 
     """
@@ -57,7 +63,7 @@ def _replace_and_create_file(html_text: str) -> None:
 
     res = _update_links_and_static(text)
 
-    with open('main\\templates\\main\\index.html', 'w', encoding='utf-8') as f:
+    with open(f'main\\templates\\main\\{filename}.html', 'w', encoding='utf-8') as f:
         f.write(res)
 
 
@@ -115,16 +121,10 @@ def _update_links_and_static(text: str) -> str:
     return text
 
 
-def get_updated_html_page(link: str) -> None:
+def get_updated_html_file(link: str, filename: str) -> None:
     """
     Парсит html-страницу и добавляет ™ к каждому слову с длиной равной шести. Готовая страница записывается в файл .html
     """
 
     html_text = _parser(link)
-    text = _replace_and_create_file(html_text)
-
-    return text
-
-
-if __name__ == '__main__':
-    get_updated_html_page('https://news.ycombinator.com/news')
+    _replace_and_create_file(html_text, filename)
