@@ -27,7 +27,6 @@ def _parser(url: str) -> Union[str, None]:
     """
     Парсит html-страницу и подключает к ней стили
     """
-
     user = fake_useragent.UserAgent().random
     headers = {
         'user-agent': user,
@@ -63,7 +62,8 @@ def _replace_and_create_file(html_text: str, filename: str) -> None:
 
     res = _update_links_and_static(text)
 
-    with open(f'main\\templates\\main\\{filename}.html', 'w', encoding='utf-8') as f:
+    path_to_file_dir = 'main\\templates\\main\\' 
+    with open(f'{path_to_file_dir}{filename}.html', 'w', encoding='utf-8') as f:
         f.write(res)
 
 
@@ -71,7 +71,6 @@ def _clean_text_from_html(html_text: str) -> str:
     """
     Очищает страницу от html-тегов и служебных символов
     """
-
     h = html2text.HTML2Text()
     h.ignore_links = True
 
