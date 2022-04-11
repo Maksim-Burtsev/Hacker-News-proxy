@@ -1,10 +1,10 @@
-import re
 import string
 from typing import Union
 
 import html2text
 import requests
 import fake_useragent
+from bs4 import BeautifulSoup
 
 
 def add_query_params_to_link(url: str, request_items: dict) -> str:
@@ -62,7 +62,7 @@ def _replace_and_create_file(html_text: str, filename: str) -> None:
 
     res = _update_links_and_static(text)
 
-    path_to_file_dir = 'main\\templates\\main\\' 
+    path_to_file_dir = 'main\\templates\\main\\'
     with open(f'{path_to_file_dir}{filename}.html', 'w', encoding='utf-8') as f:
         f.write(res)
 
@@ -97,10 +97,13 @@ def _clean_extra_tm(html_text: str) -> str:
 
     text += html_text[-1]
 
-    regex = re.compile(r'<a href="(.*)™+?">')
+    soup = BeautifulSoup(text, 'lxml')
+    links = [str(link) for link in soup.find_all('a')]
 
-    for a in regex.findall(text):
-        text = text.replace(f'<a href="{a}™"', f'<a href="{a}"')
+    for link in links:
+        if '™' in link:
+            correct_link = link.replace('™', '')
+            text = text.replace(link, correct_link)
 
     return text
 
@@ -112,10 +115,12 @@ def _update_links_and_static(text: str) -> str:
 
     text = '{% load static %}' + text
 
-    text = text.replace('https://news.ycombinator.com', '')
+    text = text.replace('https://news.ycombinator.com', '/')
 
     for i in ('favicon.ico', 'y18.gif'):
         text = text.replace(i, "{% static 'main/logo.ico' %}")
+
+    text = text.replace('yc500.gif', "{% static 'main/yc500.gif' %}")
 
     return text
 

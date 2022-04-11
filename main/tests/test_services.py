@@ -27,15 +27,18 @@ class MainServicesTest(TestCase):
 
         self.assertEqual(result, correct_result)
 
+
     def test_parser(self):
 
         text = _parser('https://news.ycombinator.com/')
         self.assertTrue(text)
 
+
     def test_parser_bad_url(self):
 
         text = _parser('https://news.ycombinator.com/bad_url')
         self.assertIsNone(text)
+
 
     def test_clean_text_from_html(self):
 
@@ -43,11 +46,13 @@ class MainServicesTest(TestCase):
         self.assertEqual('  Hello  world \n\n',
                          _clean_text_from_html(raw_text))
 
+
     def test_clean_extra_tm(self):
         text = 'sixsix™ wron™g w™rnddfasd corrct™'
 
         self.assertEqual('sixsix™ wrong wrnddfasd corrct™',
                          _clean_extra_tm(text))
+
 
     def test_update_links_and_static(self):
 
@@ -64,6 +69,7 @@ class MainServicesTest(TestCase):
 
         self.assertEqual(result.count("{% static 'main/logo.ico' %}"), 2)
 
+
     def test_get_updated_html_page(self):
 
         url = 'https://news.ycombinator.com/news'
@@ -74,6 +80,7 @@ class MainServicesTest(TestCase):
         self.assertTrue(os.path.exists(path_to_file))
 
         os.remove('main\\templates\\main\\test.html')
+
 
     def test_replace_and_create_file(self):
 
